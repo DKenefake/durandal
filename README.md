@@ -9,7 +9,7 @@ Currently, Durandal is very experimental and is a personal project.
 - [ ] - Dynamic removal of cuts as they become unneeded
 - [ ] - A more generic LP interface for other LP solvers
 
-# Requriments (Restrictions)
+## Requriments (Restrictions)
 
 * Only affine constraints are supported
 * Feasible space must be bounded
