@@ -7,7 +7,7 @@ Currently, Durandal is very experimental and is a personal project.
 
 - [x] - Solve NLPs via a series of converging LPs
 - [ ] - Dynamic removal of cuts as they become redundant
-- [ ] - Optional trust region
+- [ ] - Trust Region
 - [ ] - A more generic LP interface for other LP solvers
 
 ## Requriments (Restrictions)
@@ -19,7 +19,7 @@ Currently, Durandal is very experimental and is a personal project.
 
 ## How does it work?
 
-This algorithm forms a converging sequence of upper and lower bounds on the objective function by introducing cuts in the form of supporting hyperplanes of the objective function. Additionally, the candidate solution is always feasible so that it can be interrupted at any point in the method. The core kernel of this routine is the generation of supporting hyperplanes and re-optimizing the central LP problem. This re-optimization warm started as the dual of the central LP is feasible after introducing the cut. As can be seen here, each visited point generates a supporting hyperplane which translates to a constraint/cut in the LP.
+This algorithm forms a converging sequence of upper and lower bounds on the objective function by introducing cuts in the form of supporting hyperplanes of the objective function. Additionally, the candidate solution is always feasible so that it can be interrupted at any point in the method and still yeild a feasible approximate optimum. The core kernel of this routine is the generation of supporting hyperplanes and re-optimizing the central LP problem. This re-optimization warm started as the dual of the central LP is feasible after introducing the cut. Each visited point generates a supporting hyperplane which translates to a constraint/cut in the LP.
 
 ![image](https://github.com/DKenefake/durandal/blob/main/durandal.PNG)
 
