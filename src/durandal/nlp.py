@@ -183,7 +183,7 @@ class NLP:
 
         if f_0 <= self.ub:
             self.best_sol = x_0
-            self.ub = f_0
+            self.ub = float(f_0)
 
     def add_cut(self, sp: SupportingPlane) -> None:
         """

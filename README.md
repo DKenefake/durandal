@@ -41,6 +41,7 @@ Yes
 
 from durandal.nlp import NLP
 import numpy
+import matplotlib.pyplot as plt
 
 # define the convex nonlinear objective
 def f(x):
@@ -62,4 +63,24 @@ x_approx = nlp.solve(max_cuts=3, output=True)
 
 # start from where the last solve started off and solve for another 10 cuts while again showing outputs
 x_sol = nlp.solve(max_cuts= 10, output = True)
+
+# reconstruct the nlp solver object
+nlp = NLP(f, grad_f, A, b)
+
+# here we use a callback to record the upper and lower bounds per iteration
+lower_bounds = []
+upper_bounds = []
+def my_callback(cb_nlp:NLP):
+    lower_bounds.append(cb_nlp.lb)
+    upper_bounds.append(cb_nlp.ub)
+
+nlp.solve(max_cuts=10, output=False, gen_callback=my_callback)
+
+#show the change in lower bound w.r.t. iteration
+plt.plot(upper_bounds,marker='x')
+plt.plot(lower_bounds,marker='o')
+plt.title('Upper and Lower Bound of the optimal solution w.r.t Iteration')
+plt.ylabel('f(x)')
+plt.xlabel('Iteration count')
+plt.legend(['Upper Bound','Lower Bound'])
 ```
