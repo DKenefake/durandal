@@ -74,7 +74,7 @@ def my_callback(cb_nlp:NLP):
     lower_bounds.append(cb_nlp.lb)
     upper_bounds.append(cb_nlp.ub)
 
-nlp.solve(max_cuts=10, output=False, gen_callback=my_callback)
+nlp.solve(max_cuts=5, output=False, gen_callback=my_callback)
 
 #show the change in lower bound w.r.t. iteration
 plt.plot(upper_bounds,marker='x')
@@ -84,3 +84,4 @@ plt.ylabel('f(x)')
 plt.xlabel('Iteration count')
 plt.legend(['Upper Bound','Lower Bound'])
 ```
+![image](ConvergencePlot.png)
