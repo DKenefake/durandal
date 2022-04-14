@@ -6,7 +6,7 @@ Currently, Durandal is very experimental and is a personal project.
 ## Features
 
 - [x] - Solve NLPs via a series of converging LPs
-- [ ] - Dynamic removal of cuts as they become unneeded
+- [ ] - Dynamic removal of cuts as they become redundant
 - [ ] - A more generic LP interface for other LP solvers
 
 ## Requriments (Restrictions)
