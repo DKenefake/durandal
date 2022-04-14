@@ -1,5 +1,5 @@
 # Durandal
-Durandal is a convex NLP solver based on successive linear programming technique. Uses the principle of supporting hyperplanes of convex functions to solve the problem. This cutting procedure is where we get the solver's name from, the legendary sword Durandal.  
+Durandal is a convex NLP solver based on a successive linear programming technique. Uses the principle of supporting hyperplanes of convex functions to solve the problem. This cutting procedure is where we get the solver's name from, the legendary sword Durandal.  
 
 Currently, Durandal is very experimental and is a personal project.
 
@@ -7,6 +7,7 @@ Currently, Durandal is very experimental and is a personal project.
 
 - [x] - Solve NLPs via a series of converging LPs
 - [ ] - Dynamic removal of cuts as they become redundant
+- [ ] - Optional trust region
 - [ ] - A more generic LP interface for other LP solvers
 
 ## Requriments (Restrictions)
@@ -49,7 +50,7 @@ def f(x):
 def grad_f(x):
     return numpy.exp(x) + 2 * x
 
-# Constraints that |x| <= 2
+# Constrain x to have mangitude up to 2, |x| <= 2
 A = numpy.array([[1], [-1]])
 b = numpy.array([[2], [2]])
 
