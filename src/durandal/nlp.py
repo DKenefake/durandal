@@ -146,8 +146,10 @@ class NLP:
             gen_callback = nlp_general_callback
 
         self.model.optimize()
-
-        while len(self.planes) <= max_cuts:
+        
+        starting_plane_count = len(self.planes)
+        
+        while len(self.planes) <= max_cuts + starting_plane_count:
 
             # Generate the cutting plane
 
