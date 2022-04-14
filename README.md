@@ -33,3 +33,30 @@ Yes
 ### Does it work?
 
 Yes
+
+## Example code of solving a 1D NLP
+
+```python
+
+from durandal.nlp import NLP
+import numpy
+
+# define the convex nonlinear objective
+def f(x):
+    return numpy.exp(x) + x ** 2
+
+# define the gradiant of the objective
+def grad_f(x):
+    return numpy.exp(x) + 2 * x
+
+# Constraints that |x| <= 2
+A = numpy.array([[1], [-1]])
+b = numpy.array([[2], [2]])
+
+# construct the nlp solver object
+nlp = NLP(f, grad_f, A, b)
+
+# solve the NLP with up to 20 cuts and showing output
+x_sol = nlp.solve(max_cuts=20, output=True)
+
+```

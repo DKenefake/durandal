@@ -36,10 +36,10 @@ def initialize_durandal(A, b) -> numpy.ndarray:
 
     model.Params.OutputFlag = 0
 
-    x = model.addMVar(numpy.size(c), vtype=GRB.CONTINUOUS, lb = -GRB.INFINITY)
+    x = model.addMVar(numpy.size(c), vtype=GRB.CONTINUOUS, lb=-GRB.INFINITY)
 
-    model.setObjective(c.flatten()@x)
-    model.addConstr(A_ball@x <= b_ball.flatten())
+    model.setObjective(c.flatten() @ x)
+    model.addConstr(A_ball @ x <= b_ball.flatten())
 
     model.optimize()
 
@@ -78,22 +78,41 @@ class NLP:
     grad_f: Callable[[numpy.ndarray], numpy.ndarray]
     A: numpy.ndarray
     b: numpy.ndarray
+    model: gp.Model
+    x: gp.MVar
 
     def __init__(self, f, grad_f, A, b):
+        """
+        Initializes the NLP routine, finds an initial feasible point and generates an initial supporting hyperplane
+        """
+
+        # store the objective function
         self.f = f
-        self.grad_f = grad_f
+        # wrap the grad f function in a lambda to reshape it to a column vector (just in case)
+        self.grad_f = lambda v: grad_f(v).reshape(-1, 1)
+
+        # initilize the planes as empty
+        self.planes = []
+
+        # find an initial feasible point
+        self.init_x_point(A, b)
+
+        # generate the initial LP model
+        self.init_lp_model()
+
+    def init_x_point(self, A, b) -> None:
 
         # calculate an initial point to start of the calculation
-        initial_point = initialize_durandal(A, b).reshape(-1,1)
+        initial_point = initialize_durandal(A, b).reshape(-1, 1)
 
         self.best_sol = initial_point
 
         # find f and grad f at this point
         f_init = self.f(initial_point)
         grad_f_init = self.grad_f(initial_point)
-
+        init_plane = SupportingPlane(f_init, grad_f_init, initial_point)
         # add the initial plane to the set
-        self.planes = [SupportingPlane(f_init, grad_f_init, initial_point), ]
+        self.planes.append(init_plane)
 
         # set upper and lower bounds
         self.ub = f_init
@@ -103,49 +122,81 @@ class NLP:
         self.A = numpy.block([A, numpy.zeros((A.shape[0], 1))])
         self.b = b
 
-    def solve(self, max_cuts: int = 10, output: bool = False):
-        num_cuts = 0
-
-        model = gp.Model()
-        model.Params.OutputFlag = 0
-        model.Params.Method = 1
+    def init_lp_model(self) -> None:
+        self.model = gp.Model()
+        self.model.Params.OutputFlag = 0
+        self.model.Params.Method = 1
         num_vars = self.A.shape[-1]
 
-        x = model.addMVar(num_vars, lb=-GRB.INFINITY, vtype=GRB.CONTINUOUS)
+        self.x = self.model.addMVar(num_vars, lb=-GRB.INFINITY, vtype=GRB.CONTINUOUS)
 
         # set objective
-        model.setObjective(x[-1], GRB.MINIMIZE)
-        model.addConstrs(sp.c.flatten() @ x <= sp.d for sp in self.planes)
-        model.addConstr(self.A @ x <= self.b.flatten())
-        model.optimize()
+        self.model.setObjective(self.x[-1], GRB.MINIMIZE)
 
-        while num_cuts <= max_cuts:
+        sp = self.planes[0]
+        self.model.addConstrs(sp.c.flatten() @ self.x <= sp.d for sp in self.planes)
+        self.model.addConstr(self.A @ self.x <= self.b.flatten())
 
-            # add cutting plane
+    def solve(self, max_cuts: int = 100, output: bool = False, term_callback=None, gen_callback=None):
 
-            x_it = x[:-1].X.reshape(-1, 1)
+        if term_callback is None:
+            term_callback = nlp_termination_callback
 
+        if gen_callback is None:
+            gen_callback = nlp_general_callback
+
+        self.model.optimize()
+
+        while len(self.planes) <= max_cuts:
+
+            # Generate the cutting plane
+
+            x_it = self.x[:-1].X.reshape(-1, 1)
             f_x = self.f(x_it)
             grad_f_x = self.grad_f(x_it)
-
             sp = SupportingPlane(f_x, grad_f_x, x_it)
 
-            self.planes.append(sp)
+            self.add_cut(sp)
 
-            model.addConstr(sp.c.flatten() @ x <= sp.d, name=f'cut_{num_cuts}')
-            model.optimize()
+            self.model.optimize()
 
-            # update tracking data
-            lb = x[-1].X
-            num_cuts += 1
+            # add updating for the
+            self.update_bounds(x_it, f_x, lb=self.x[-1].X)
 
-            self.lb = max(self.lb, lb)
-
-            if f_x <= self.ub:
-                self.best_sol = x_it
-                self.ub = f_x
+            # call the generic call back
+            gen_callback(self)
+            # call the termination call back
+            if term_callback(self):
+                break
 
             if output:
                 print(f'Lower bound {self.lb} & Upper bound {self.ub}')
 
         return self.best_sol
+
+    def update_bounds(self, x_0, f_0, lb):
+        # update tracking data
+
+        self.lb = max(self.lb, lb)
+
+        if f_0 <= self.ub:
+            self.best_sol = x_0
+            self.ub = f_0
+
+    def add_cut(self, sp: SupportingPlane) -> None:
+        """
+        Adds the supporting hyper plane to the plane set and applied the cut to the model
+        """
+        # add the supporting hyperplane to the plane list
+        self.planes.append(sp)
+
+        # apply the hyperplane to the model
+        self.model.addConstr(sp.c.flatten() @ self.x <= sp.d, name=f'user_cut')
+
+
+def nlp_termination_callback(obj: NLP) -> bool:
+    return False
+
+
+def nlp_general_callback(obj: NLP) -> None:
+    return None
