@@ -3,6 +3,12 @@ Durandal is a convex NLP solver based on a successive linear programming techniq
 
 Currently, Durandal is very experimental and is a personal project.
 
+## How to install
+
+```bash
+pip install durandal
+```
+
 ## Features
 
 - [x] - Solve NLPs via a series of converging LPs
