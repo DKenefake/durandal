@@ -57,7 +57,9 @@ b = numpy.array([[2], [2]])
 # construct the nlp solver object
 nlp = NLP(f, grad_f, A, b)
 
-# solve the NLP with up to 20 cuts and showing output
-x_sol = nlp.solve(max_cuts=20, output=True)
+# solve the NLP with up to 3 cuts while showing output
+x_approx = nlp.solve(max_cuts=3, output=True)
 
+# start from where the last solve started off and solve for another 10 cuts while again showing outputs
+x_sol = nlp.solve(max_cuts= 13, output = True)
 ```
