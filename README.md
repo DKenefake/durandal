@@ -1,5 +1,5 @@
 # Durandal
-Durandal is a convex NLP solver based on successive linear programming. Uses the principle of supporting hyperplanes of convex functions to solve the problem. This cutting procedure is where we get the solver's name from, the legendary sword Durandal.  
+Durandal is a convex NLP solver based on successive linear programming technique. Uses the principle of supporting hyperplanes of convex functions to solve the problem. This cutting procedure is where we get the solver's name from, the legendary sword Durandal.  
 
 Currently, Durandal is very experimental and is a personal project.
 
@@ -18,10 +18,11 @@ Currently, Durandal is very experimental and is a personal project.
 
 ## How does it work?
 
-This algorithm forms a converging sequence of upper and lower bounds on the objective function by introducing cuts in the form of supporting hyperplanes of the objective function. Additionally, the candidate solution is always feasible so that it can be interrupted at any point in the method. The core kernel of this routine is the generation of supporting hyperplanes and re-optimizing the central LP problem. This re-optimization warm started as the dual of the central LP is feasible after introducing the cut.
+This algorithm forms a converging sequence of upper and lower bounds on the objective function by introducing cuts in the form of supporting hyperplanes of the objective function. Additionally, the candidate solution is always feasible so that it can be interrupted at any point in the method. The core kernel of this routine is the generation of supporting hyperplanes and re-optimizing the central LP problem. This re-optimization warm started as the dual of the central LP is feasible after introducing the cut. As can be seen here, each visited point generates a supporting hyperplane which translates to a constraint/cut in the LP.
 
+![image](https://github.com/DKenefake/durandal/blob/main/durandal.PNG)
 
-This procedure can basically be viewed as making approximations over the epigraph of the objective function over the feasible region and refining the approximation per iteration.
+This procedure can basically be viewed as making approximations over the epigraph of the objective function over the feasible region and refining the approximation per iteration. 
 
 ## Should I use it?
 
