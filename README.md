@@ -61,5 +61,5 @@ nlp = NLP(f, grad_f, A, b)
 x_approx = nlp.solve(max_cuts=3, output=True)
 
 # start from where the last solve started off and solve for another 10 cuts while again showing outputs
-x_sol = nlp.solve(max_cuts= 13, output = True)
+x_sol = nlp.solve(max_cuts= 10, output = True)
 ```
