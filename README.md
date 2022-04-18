@@ -20,7 +20,7 @@ pip install durandal
 
 * Only affine constraints are supported
 * Feasible space must be bounded
-* The objective function must be bounded above inside the feasible space
+* The objective function & gradiant must be bounded inside the feasible space
 * The objective function must be convex (nonconvex are allowed, but no convergence guarantees are given)
 
 ## How does it work?
