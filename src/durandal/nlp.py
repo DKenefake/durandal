@@ -87,7 +87,7 @@ class NLP:
         """
 
         # store the objective function
-        self.f = f
+        self.f = lambda v: float(f(v))
         # wrap the grad f function in a lambda to reshape it to a column vector (just in case)
         self.grad_f = lambda v: grad_f(v).reshape(-1, 1)
 
@@ -146,14 +146,16 @@ class NLP:
             gen_callback = nlp_general_callback
 
         self.model.optimize()
-        
+
         starting_plane_count = len(self.planes)
-        
-        while len(self.planes) <= max_cuts + starting_plane_count:
+        num_iterations = 0
+        while num_iterations <= max_cuts:
+
+
 
             # Generate the cutting plane
-
             x_it = self.x[:-1].X.reshape(-1, 1)
+            y = self.x[-1].X
             f_x = self.f(x_it)
             grad_f_x = self.grad_f(x_it)
             sp = SupportingPlane(f_x, grad_f_x, x_it)
@@ -162,8 +164,9 @@ class NLP:
 
             self.model.optimize()
 
+
             # add updating for the
-            self.update_bounds(x_it, f_x, lb=self.x[-1].X)
+            self.update_bounds(x_it, f_x, lb=y)
 
             # call the generic call back
             gen_callback(self)
@@ -173,6 +176,15 @@ class NLP:
 
             if output:
                 print(f'Lower bound {self.lb} & Upper bound {self.ub}')
+
+            # update the iteration count
+            num_iterations += 1
+
+            # dynamically remove unused constraints
+            self.remove_cuts()
+
+            # needed to make gurobi happy
+            self.model.optimize()
 
         return self.best_sol
 
@@ -193,8 +205,19 @@ class NLP:
         self.planes.append(sp)
 
         # apply the hyperplane to the model
-        self.model.addConstr(sp.c.flatten() @ self.x <= sp.d, name=f'user_cut')
+        self.model.addConstr(sp.c.flatten() @ self.x <= sp.d, name=f'cut_{len(self.planes)}')
 
+    def remove_cuts(self, ):
+        # get the model constraints
+        constrs = self.model.getConstrs()
+
+        # iterate over only the added cuts
+        for c in filter(lambda x: 'cut_' in x.ConstrName, constrs):
+            # if nonzero slack then remove the constraint
+            if c.Slack > 0:
+                self.model.remove(c)
+
+        self.model.update()
 
 def nlp_termination_callback(obj: NLP) -> bool:
     return False

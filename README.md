@@ -12,7 +12,7 @@ pip install durandal
 ## Features
 
 - [x] - Solve NLPs via a series of converging LPs
-- [ ] - Dynamic removal of cuts as they become redundant
+- [x] - Dynamic removal of cuts as they become redundant
 - [ ] - Trust Region
 - [ ] - A more generic LP interface for other LP solvers
 
