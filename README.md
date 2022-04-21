@@ -57,7 +57,7 @@ def f(x):
 def grad_f(x):
     return numpy.exp(x) + 2 * x
 
-# Constrain x to have mangitude up to 2, |x| <= 2
+# Constrain x to have magnitude up to 2, |x| <= 2
 A = numpy.array([[1], [-1]])
 b = numpy.array([[2], [2]])
 
