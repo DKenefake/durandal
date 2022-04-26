@@ -1,5 +1,5 @@
 # Durandal
-Durandal is a convex NLP solver based on a successive linear programming technique. Uses the principle of supporting hyperplanes of convex functions to solve the problem. This cutting procedure is where we get the solver's name from, the legendary sword Durandal.  
+Durandal is a convex NLP solver based on a successive linear programming technique. Uses the principle of supporting hyperplanes of convex functions to solve the problem, also known as Kelley's Method. This cutting procedure is where we get the solver's name from, the legendary sword Durandal.  
 
 Currently, Durandal is very experimental and is a personal project.
 
