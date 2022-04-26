@@ -13,6 +13,8 @@ pip install durandal
 
 - [x] - Solve NLPs via a series of converging LPs
 - [x] - Dynamic removal of cuts as they become redundant
+- [ ] - Frank-Wolfe style optional step rules
+- [ ] - Chebychev ball style optional step rules
 - [ ] - Trust Region
 - [ ] - A more generic LP interface for other LP solvers
 
