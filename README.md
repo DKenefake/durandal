@@ -29,7 +29,15 @@ pip install durandal
 
 This algorithm forms a converging sequence of upper and lower bounds on the objective function by introducing cuts in the form of supporting hyperplanes of the objective function. Additionally, the candidate solution is always feasible so that it can be interrupted at any point in the method and still yeild a feasible approximate optimum. The core kernel of this routine is the generation of supporting hyperplanes and re-optimizing the central LP problem. This re-optimization warm started as the dual of the central LP is feasible after introducing the cut. Each visited point generates a supporting hyperplane which translates to a constraint/cut in the LP.
 
-![image](https://github.com/DKenefake/durandal/blob/main/durandal.PNG)
+$$
+\Huge
+\begin{align}
+\min_{x,y} \quad \quad \quad &y\\
+\text{s.t. }\quad   Ax &\leq b\\
+\nabla f(x_i)^T(x-x_i) + f(x_i) &\leq y,  \quad \forall x_i \in \mathcal{P}\\
+x\in\mathbb{R}^n&, y\in\mathbb{R}
+\end{align}
+$$
 
 This procedure can basically be viewed as making approximations over the epigraph of the objective function over the feasible region and refining the approximation per iteration. 
 
